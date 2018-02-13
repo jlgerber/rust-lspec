@@ -7,24 +7,24 @@ use nom::IResult::*;
 
 use super::*;
 
-named!(levelspec<&str, LevelSpec>,
-
-    alt!(complete!(do_parse!(
-            show: alphanumeric >>
+named!(pub levelspec<&str, LevelSpec>,
+    alt!(
+        complete!(do_parse!(
+            show: alt!(alphanumeric | tag_s!("%")) >>
             tag_s!(".") >>
-            seq: alphanumeric >>
+            seq: alt!(alphanumeric | tag_s!("%")) >>
             tag_s!(".") >>
-            shot: alphanumeric >> eof!() >>
+            shot: alt!(alphanumeric | tag_s!("%")) >> eof!() >>
             (LevelSpec::from_shot(show, seq, shot))
         )) |
         complete!(do_parse!(
-            show: alphanumeric >>
+            show:  alt!(alphanumeric | tag_s!("%")) >>
             tag_s!(".") >>
-            seq: alphanumeric >> eof!() >>
+            seq: alt!(alphanumeric | tag_s!("%")) >> eof!() >>
             (LevelSpec::from_sequence(show, seq))
         )) |
         complete!(do_parse!(
-            show: alphanumeric >>
+            show: alt!(alphanumeric | tag_s!("%")) >>
              eof!() >>
             (LevelSpec::from_show(show))
         ))
@@ -42,9 +42,30 @@ mod tests {
         assert_eq!(l, Done("",e));
     }
 
+    #[test]
+    fn shot_seq_wildcard_success() {
+        let l = levelspec("MARY.%.9999");
+        let e = LevelSpec::from_shot("MARY", "%", "9999");
+        assert_eq!(l, Done("",e));
+    }
+
+    #[test]
+    fn shot_seq_wildcard_shot_wc_success() {
+        let l = levelspec("MARY.%.%");
+        let e = LevelSpec::from_shot("MARY", "%", "%");
+        assert_eq!(l, Done("",e));
+    }
+
      #[test]
     fn shot_error() {
         let l = levelspec("MARY.RD.9999@");
+        assert_eq!(l, Error(ErrorKind::Alt) );
+    }
+
+
+     #[test]
+    fn shot_wildcard_error() {
+        let l = levelspec("MARY.RD.%@");
         assert_eq!(l, Error(ErrorKind::Alt) );
     }
 
