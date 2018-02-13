@@ -8,10 +8,10 @@ pub struct LevelSpec {
 }
 
 impl LevelSpec {
-    pub fn new(in_str: &str) -> LevelSpec {
+    pub fn new(in_str: &str) -> Result<LevelSpec, Box<std::error::Error>> {
         // todo. dont unwrap. return a Result<LevelSpec, Box<Error>>
-        let results = parse_string::gen_levelspec(in_str).unwrap();
-        results.1
+        let results = parse_string::gen_levelspec(in_str).to_result()?;
+        Ok(results)
     }
 
     pub fn from_show(show: &str) -> LevelSpec {
@@ -72,12 +72,21 @@ mod tests  {
 
     #[test]
     fn calling_new() {
-        let lv = LevelSpec::new("SHOW.%.1000");
+        let lv = LevelSpec::new("SHOW.%.1000").unwrap();
         let lv2 = LevelSpec {
                             show: LevelType::Term("SHOW".into()),
                             sequence: LevelType::Wildcard,
                             shot: LevelType::Term("1000".into())
                          };
         assert_eq!(lv, lv2);
+    }
+
+    #[test]
+    fn calling_new_err() {
+        let lv = LevelSpec::new("SHOW.%.1000.");
+
+        assert!(lv.is_err());
+        let es = format!("{}",lv.unwrap_err());
+        assert_eq!(es, "Alternative");
     }
 }

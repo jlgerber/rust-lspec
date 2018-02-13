@@ -1,7 +1,6 @@
 //!
 //! parse_string parses string and returns levelspec
 //!
-
 use nom::*;
 use nom::IResult::*;
 
@@ -62,14 +61,13 @@ mod tests {
         assert_eq!(l, Error(ErrorKind::Alt) );
     }
 
-
-     #[test]
+    #[test]
     fn shot_wildcard_error() {
         let l = gen_levelspec("MARY.RD.%@");
         assert_eq!(l, Error(ErrorKind::Alt) );
     }
 
-     #[test]
+    #[test]
     fn seq_success() {
         let l = gen_levelspec("MARY.RD");
         let e = LevelSpec::from_sequence("MARY", "RD");
@@ -77,19 +75,19 @@ mod tests {
     }
 
 
-     #[test]
+    #[test]
     fn seq_error() {
         let l = gen_levelspec("MARY.RD#");
         assert_eq!(l, Error(ErrorKind::Alt));
     }
 
-     #[test]
+    #[test]
     fn seq_error_prefix() {
         let l = gen_levelspec("MARY.#RD#");
         assert_eq!(l, Error(ErrorKind::Alt));
     }
 
-     #[test]
+    #[test]
     fn show_success() {
         let l = gen_levelspec("MARY");
         let e = LevelSpec::from_show("MARY");
