@@ -30,7 +30,7 @@ impl LevelType {
 }
 
 #[cfg(test)]
-mod leveltypetests {
+mod tests {
     use super::*;
 
     #[test]
