@@ -9,7 +9,6 @@ pub struct LevelSpec {
 
 impl LevelSpec {
     pub fn new(in_str: &str) -> Result<LevelSpec, Box<std::error::Error>> {
-        // todo. dont unwrap. return a Result<LevelSpec, Box<Error>>
         let results = parse_string::gen_levelspec(in_str).to_result()?;
         Ok(results)
     }
