@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug,Eq,PartialEq)]
+#[derive(Debug,Clone,Eq,PartialEq)]
 pub struct LevelSpec {
     show: LevelType,
     sequence: LevelType,
@@ -35,6 +35,20 @@ impl LevelSpec {
             sequence: if sequence == "%" { LevelType::Wildcard } else{ LevelType::Term(sequence.into()) },
             shot: if shot == "%" { LevelType::Wildcard } else{ LevelType::Term(shot.into()) } ,
         }
+    }
+
+    /// return a vector of Strings representing a level
+    pub fn to_vec(&self) -> Vec<String> {
+        let mut ret = Vec::new();
+        let show = self.show.to_string();
+        ret.push(show);
+        if !self.sequence.is_none() {
+            ret.push(self.sequence.to_string());
+            if !self.shot.is_none() {
+                ret.push(self.shot.to_string());
+            }
+        }
+        ret // return ret
     }
 }
 
@@ -87,5 +101,13 @@ mod tests  {
         assert!(lv.is_err());
         let es = format!("{}",lv.unwrap_err());
         assert_eq!(es, "Alternative");
+    }
+
+    #[test]
+    fn to_vec() {
+        let lv = LevelSpec::new("FOO.RD.1000").unwrap();
+        let res = lv.to_vec();
+        let joined = format!("{}.{}.{}", res[0], res[1], res[2]);
+        assert_eq!(joined, "FOO.RD.1000".to_string());
     }
 }

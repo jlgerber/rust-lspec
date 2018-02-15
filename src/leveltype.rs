@@ -1,5 +1,5 @@
 
-#[derive(Debug,Eq,PartialEq)]
+#[derive(Debug,Clone,Eq,PartialEq)]
 pub enum LevelType {
     Term(String),
     Wildcard,
@@ -7,6 +7,15 @@ pub enum LevelType {
 }
 
 impl LevelType {
+
+    pub fn to_string(&self) -> String {
+        match *self {
+            LevelType::Term(ref val) => val.clone(),
+            LevelType::Wildcard => "%".to_string(),
+            _ => String::new(),
+        }
+    }
+
     pub fn is_term(&self) -> bool {
         match *self {
             LevelType::Term(_) => true,
@@ -32,6 +41,27 @@ impl LevelType {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn to_string_term() {
+        let l1 = LevelType::Term("Foobar".into());
+        let e = l1.to_string();
+        assert_eq!("Foobar".to_string(), e);
+    }
+
+    #[test]
+    fn to_wildcard_term() {
+        let l1 = LevelType::Wildcard;
+        let e = l1.to_string();
+        assert_eq!("%".to_string(), e);
+    }
+
+    #[test]
+    fn to_none_term() {
+        let l1 = LevelType::None;
+        let e = l1.to_string();
+        assert_eq!("".to_string(), e);
+    }
 
     #[test]
     fn is_term() {
