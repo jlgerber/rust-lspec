@@ -8,7 +8,10 @@ fn main() {
     if args.len() < 2 {
         println!("usage: levelspec <level>");
     } else {
-        let ls = LevelSpec::new(&args[1]);
-        println!("{:?}", ls);
+        if let Ok(ls) = LevelSpec::new(&args[1]){
+            println!("{:?}", ls);
+        } else {
+            println!("Error parsing {}", &args[1]);
+        }
     }
 }
