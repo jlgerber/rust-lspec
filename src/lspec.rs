@@ -37,6 +37,32 @@ impl LevelSpec {
         }
     }
 
+    pub fn show(&self) -> Option<String> {
+        match self.show {
+            LevelType::Wildcard => Some(self.show.to_string()),
+            LevelType::Term(_) => Some(self.show.to_string()),
+            _ => None,
+        }
+    }
+
+    /// Retrieve the sequence as a string wrapped in an Option
+    pub fn sequence(&self) -> Option<String> {
+        match self.sequence {
+            LevelType::Wildcard => Some(self.sequence.to_string()),
+            LevelType::Term(_) => Some(self.sequence.to_string()),
+            _ => None,
+        }
+    }
+
+    /// Retrieve the sequence as a string wrapped in an Option
+    pub fn shot(&self) -> Option<String> {
+        match self.shot {
+            LevelType::Wildcard => Some(self.shot.to_string()),
+            LevelType::Term(_) => Some(self.shot.to_string()),
+            _ => None,
+        }
+    }
+
     /// return a vector of Strings representing a level
     pub fn to_vec(&self) -> Vec<String> {
         let mut ret = Vec::new();
@@ -65,7 +91,43 @@ mod tests  {
         assert_eq!(ls1, expected);
     }
 
-     #[test]
+    #[test]
+    fn show() {
+        let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
+        let show = ls1.show();
+        assert_eq!(show, Some("DEVIT".to_string()));
+    }
+
+   #[test]
+    fn seq() {
+        let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
+        let seq = ls1.sequence();
+        assert_eq!(seq, Some("RD".to_string()));
+    }
+
+    #[test]
+    fn seq_none() {
+        let ls1 = LevelSpec::from_show("DEVIT");
+        let seq = ls1.sequence();
+        assert_eq!(seq, None);
+    }
+
+
+   #[test]
+    fn shot() {
+        let ls1 = LevelSpec::from_shot("DEVIT", "RD", "0001");
+        let shot = ls1.shot();
+        assert_eq!(shot, Some("0001".to_string()));
+    }
+
+    #[test]
+    fn shot_none() {
+        let ls1 = LevelSpec::from_sequence("DEVIT","RD");
+        let shot = ls1.shot();
+        assert_eq!(shot, None);
+    }
+
+    #[test]
     fn from_sequence() {
         let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
         let expected = LevelSpec {show: LevelType::Term("DEVIT".into()),
