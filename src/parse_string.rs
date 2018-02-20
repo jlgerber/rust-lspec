@@ -3,13 +3,18 @@
 //!
 use nom::*;
 use nom::IResult::*;
+use std::str;
 
 use super::*;
+
+named!(alpha_alphanumeric<&str, &str>,
+        verify!(alphanumeric, |val: &str| !val.chars().next().unwrap().is_digit(10) )
+);
 
 named!(pub gen_levelspec<&str, LevelSpec>,
     alt!(
         complete!(do_parse!(
-            show: alt!(alphanumeric | tag_s!("%")) >>
+            show: alt!(alpha_alphanumeric | tag_s!("%")) >>
             tag_s!(".") >>
             seq: alt!(alphanumeric | tag_s!("%")) >>
             tag_s!(".") >>
@@ -17,13 +22,13 @@ named!(pub gen_levelspec<&str, LevelSpec>,
             (LevelSpec::from_shot(show, seq, shot))
         )) |
         complete!(do_parse!(
-            show:  alt!(alphanumeric | tag_s!("%")) >>
+            show:  alt!(alpha_alphanumeric | tag_s!("%")) >>
             tag_s!(".") >>
             seq: alt!(alphanumeric | tag_s!("%")) >> eof!() >>
             (LevelSpec::from_sequence(show, seq))
         )) |
         complete!(do_parse!(
-            show: alt!(alphanumeric | tag_s!("%")) >>
+            show: alt!(alpha_alphanumeric | tag_s!("%")) >>
              eof!() >>
             (LevelSpec::from_show(show))
         ))
@@ -33,12 +38,37 @@ named!(pub gen_levelspec<&str, LevelSpec>,
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn s(inv: &str) -> String {
+        inv.to_string()
+    }
+    #[test]
+    fn test_alphanum() {
+        let l = alpha_alphanumeric("a123");
+        assert_eq!(l, Done("","a123"));
+        let l = alpha_alphanumeric("1a34");
+        assert_eq!(l, Error(ErrorKind::Verify));
+        let l = alpha_alphanumeric("aaa&");
+        assert_eq!(l, Done("&","aaa"));
+    }
 
     #[test]
     fn shot_success() {
         let l = gen_levelspec("MARY.RD.9999");
         let e = LevelSpec::from_shot("MARY", "RD", "9999");
         assert_eq!(l, Done("",e));
+    }
+
+
+    #[test]
+    fn show_starts_with_num_failure() {
+        let l = gen_levelspec("1MARY");
+        assert_eq!(l, Error(ErrorKind::Alt));
+
+        let l = gen_levelspec("1MARY.RD");
+        assert_eq!(l, Error(ErrorKind::Alt));
+
+        let l = gen_levelspec("1MARY.RD.9999");
+        assert_eq!(l, Error(ErrorKind::Alt));
     }
 
     #[test]
