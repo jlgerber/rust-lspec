@@ -4,13 +4,19 @@ use super::*;
 pub struct LevelSpec {
     show: LevelType,
     sequence: LevelType,
-    shot: LevelType,
+    shot: LevelType
 }
 
 impl LevelSpec {
     pub fn new(in_str: &str) -> Result<LevelSpec, Box<std::error::Error>> {
         let results = parse_string::gen_levelspec(in_str).to_result()?;
         Ok(results)
+    }
+
+    pub fn upper(&mut self) {
+        if let LevelType::Term(ref mut show) = self.show {*show = show.to_uppercase()}
+        if let LevelType::Term(ref mut sequence) = self.sequence {*sequence = sequence.to_uppercase()}
+        if let LevelType::Term(ref mut shot) = self.shot {*shot = shot.to_uppercase()}
     }
 
     pub fn from_show(show: &str) -> LevelSpec {
@@ -139,6 +145,16 @@ mod tests  {
      #[test]
     fn from_shot() {
         let ls1 = LevelSpec::from_shot("DEVIT", "RD", "9999");
+        let expected = LevelSpec {show: LevelType::Term("DEVIT".into()),
+                                  sequence: LevelType::Term("RD".into()),
+                                shot: LevelType::Term("9999".into())};
+        assert_eq!(ls1, expected);
+    }
+
+      #[test]
+    fn from_shot_upper() {
+        let mut ls1 = LevelSpec::from_shot("devit", "rd", "9999");
+        ls1.upper();
         let expected = LevelSpec {show: LevelType::Term("DEVIT".into()),
                                   sequence: LevelType::Term("RD".into()),
                                 shot: LevelType::Term("9999".into())};
