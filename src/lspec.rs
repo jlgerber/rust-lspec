@@ -82,6 +82,23 @@ impl LevelSpec {
         }
         ret // return ret
     }
+
+    pub fn to_vec_str<'a>(&'a self) -> Vec<&'a str> {
+        let mut v = Vec::<&'a str>::new();
+        let val = self.show.to_str();
+        if val != "" {
+            v.push(val);
+            let val = self.sequence.to_str();
+            if val != "" {
+                v.push(val);
+                let val = self.shot.to_str();
+                if val != "" {
+                    v.push(val);
+                }
+            }
+        }
+        v
+    }
 }
 
 #[cfg(test)]
@@ -187,5 +204,14 @@ mod tests  {
         let res = lv.to_vec();
         let joined = format!("{}.{}.{}", res[0], res[1], res[2]);
         assert_eq!(joined, "FOO.RD.1000".to_string());
+    }
+
+
+    #[test]
+    fn to_vec_str() {
+        let lv = LevelSpec::new("FOO.RD.1000").unwrap();
+        let res = lv.to_vec_str();
+        let expected = vec!["FOO","RD","1000"];
+        assert_eq!(expected,res);
     }
 }

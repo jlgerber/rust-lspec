@@ -36,6 +36,14 @@ impl LevelType {
             _ => false,
         }
     }
+
+    pub fn to_str<'a>(&'a self) -> &'a str {
+        match *self {
+            LevelType::Term(ref val) => val,
+            LevelType::Wildcard => "%",
+            _ => "",
+        }
+    }
 }
 
 #[cfg(test)]
