@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["jonathan gerber <jlgerber@gmail.com>"]
 
 [dependencies]
-nom="*"
-clap="*"
+nom="3.2.1"
+clap="2.33.0"
