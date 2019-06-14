@@ -1,4 +1,4 @@
-use crate::{LevelType, parse_string};
+use crate::{LevelType, parse_string, LSpecError};
 
 /// LevelSpec models a shorthand describing one or more paths
 /// on disk, characterized by show, sequence, and shot. This abstraction
@@ -14,7 +14,7 @@ pub struct LevelSpec {
 impl LevelSpec {
 
     /// New up a levelspec
-    pub fn new<I>(in_str: I) -> Result<LevelSpec, Box<std::error::Error>> 
+    pub fn new<I>(in_str: I) -> Result<LevelSpec, LSpecError> 
     where
         I: AsRef<str>
     {

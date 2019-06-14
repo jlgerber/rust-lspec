@@ -9,3 +9,6 @@ pub use leveltype::LevelType;
 
 pub mod lspec;
 pub use lspec::LevelSpec;
+
+pub mod errors;
+pub use errors::LSpecError;

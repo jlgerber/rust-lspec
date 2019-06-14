@@ -1,7 +1,8 @@
 use levelspec::LevelSpec;
 use std::env;
+use levelspec::LSpecError;
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), LSpecError> {
 
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
