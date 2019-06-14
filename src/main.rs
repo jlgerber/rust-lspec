@@ -1,6 +1,5 @@
-use levelspec::LevelSpec;
+use levelspec::{LevelSpec, LSpecError};
 use std::env;
-use levelspec::LSpecError;
 
 fn main() -> Result<(), LSpecError> {
 
