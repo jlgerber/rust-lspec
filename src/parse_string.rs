@@ -1,8 +1,24 @@
 //!
 //! parse_string parses string and returns levelspec
 //!
-use nom::*;
-use nom::IResult::*;
+use nom::{
+    alphanumeric, 
+    alt, 
+    call, 
+    complete, 
+    do_parse, 
+    eof, 
+    error_position, 
+    named, 
+    tag, 
+    tag_s, 
+    verify, 
+    Compare, 
+    ErrorKind, 
+    InputLength, 
+    Slice,
+    IResult::{Done, Error}
+};
 use std::str;
 use crate::{LevelSpec};
 
