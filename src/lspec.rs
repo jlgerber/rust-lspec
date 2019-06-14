@@ -1,6 +1,10 @@
-use super::*;
+use crate::{LevelType, parse_string};
 
-#[derive(Debug,Clone,Eq,PartialEq)]
+/// LevelSpec models a shorthand describing one or more paths
+/// on disk, characterized by show, sequence, and shot. This abstraction
+/// can be thought of as mapping to something like: 
+/// `${ROOT}/show/sequence/shot`
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct LevelSpec {
     show: LevelType,
     sequence: LevelType,
@@ -8,18 +12,29 @@ pub struct LevelSpec {
 }
 
 impl LevelSpec {
-    pub fn new(in_str: &str) -> Result<LevelSpec, Box<std::error::Error>> {
-        let results = parse_string::gen_levelspec(in_str).to_result()?;
+
+    /// New up a levelspec
+    pub fn new<I>(in_str: I) -> Result<LevelSpec, Box<std::error::Error>> 
+    where
+        I: AsRef<str>
+    {
+        let results = parse_string::gen_levelspec(in_str.as_ref()).to_result()?;
         Ok(results)
     }
 
+    /// Convert the levelspec to uppercase 
     pub fn upper(&mut self) {
         if let LevelType::Term(ref mut show) = self.show {*show = show.to_uppercase()}
         if let LevelType::Term(ref mut sequence) = self.sequence {*sequence = sequence.to_uppercase()}
         if let LevelType::Term(ref mut shot) = self.shot {*shot = shot.to_uppercase()}
     }
 
-    pub fn from_show(show: &str) -> LevelSpec {
+    /// Generate a LevelSpec from a provided show
+    pub fn from_show<I>(show: I) -> LevelSpec 
+    where
+        I: AsRef<str>
+    {
+        let show = show.as_ref();
         LevelSpec{
             show: if show == "%" { LevelType::Wildcard } else{ LevelType::Term(show.into()) } ,
             sequence: LevelType::None,
@@ -27,7 +42,13 @@ impl LevelSpec {
         }
     }
 
-    pub fn from_sequence(show: &str, sequence: &str) -> LevelSpec {
+    /// New up a LevelSpec from a show and sequence
+    pub fn from_sequence<I>(show: I, sequence: I) -> LevelSpec 
+    where
+        I: AsRef<str>
+    {
+        let show = show.as_ref();
+        let sequence = sequence.as_ref();
         LevelSpec {
             show: if show == "%" { LevelType::Wildcard } else{ LevelType::Term(show.into()) } ,
             sequence: if sequence == "%" { LevelType::Wildcard } else{ LevelType::Term(sequence.into()) },
@@ -35,7 +56,14 @@ impl LevelSpec {
         }
     }
 
-    pub fn from_shot(show: &str, sequence: &str, shot: &str) -> LevelSpec {
+    /// New up a shot from a show, sequence, and shot.
+    pub fn from_shot<I>(show: I, sequence: I, shot: I) -> LevelSpec 
+    where
+        I: AsRef<str>
+    {
+        let show = show.as_ref();
+        let sequence = sequence.as_ref();
+        let shot = shot.as_ref();
         LevelSpec {
             show: if show == "%" { LevelType::Wildcard } else{ LevelType::Term(show.into()) } ,
             sequence: if sequence == "%" { LevelType::Wildcard } else{ LevelType::Term(sequence.into()) },
@@ -43,30 +71,35 @@ impl LevelSpec {
         }
     }
 
-    pub fn show(&self) -> Option<String> {
-        match self.show {
-            LevelType::Wildcard => Some(self.show.to_string()),
-            LevelType::Term(_) => Some(self.show.to_string()),
-            _ => None,
-        }
+    /// Retrieve the show if it exists. Otherwise return None
+    pub fn show(&self) -> Option<&str> {
+        self.show.to_str()
+        // match self.show {
+        //     LevelType::Wildcard => self.show.to_str(),
+        //     LevelType::Term(_) => Some(self.show.to_),
+        //     _ => None,
+       // }
     }
 
     /// Retrieve the sequence as a string wrapped in an Option
-    pub fn sequence(&self) -> Option<String> {
-        match self.sequence {
-            LevelType::Wildcard => Some(self.sequence.to_string()),
-            LevelType::Term(_) => Some(self.sequence.to_string()),
-            _ => None,
-        }
+    pub fn sequence(&self) -> Option<&str> {
+        self.sequence.to_str()
+
+        // match self.sequence {
+        //     LevelType::Wildcard => Some(self.sequence.to_string()),
+        //     LevelType::Term(_) => Some(self.sequence.to_string()),
+        //     _ => None,
+        // }
     }
 
     /// Retrieve the sequence as a string wrapped in an Option
-    pub fn shot(&self) -> Option<String> {
-        match self.shot {
-            LevelType::Wildcard => Some(self.shot.to_string()),
-            LevelType::Term(_) => Some(self.shot.to_string()),
-            _ => None,
-        }
+    pub fn shot(&self) -> Option<&str> {
+        self.shot.to_str()
+        // match self.shot {
+        //     LevelType::Wildcard => Some(self.shot.to_string()),
+        //     LevelType::Term(_) => Some(self.shot.to_string()),
+        //     _ => None,
+        // }
     }
 
     /// return a vector of Strings representing a level
@@ -83,17 +116,18 @@ impl LevelSpec {
         ret // return ret
     }
 
+    /// Convert to a vector of &str
     pub fn to_vec_str<'a>(&'a self) -> Vec<&'a str> {
         let mut v = Vec::<&'a str>::new();
         let val = self.show.to_str();
-        if val != "" {
-            v.push(val);
+        if val.is_some() {
+            v.push(val.unwrap());
             let val = self.sequence.to_str();
-            if val != "" {
-                v.push(val);
+            if val.is_some() {
+                v.push(val.unwrap());
                 let val = self.shot.to_str();
-                if val != "" {
-                    v.push(val);
+                if val.is_some() {
+                    v.push(val.unwrap());
                 }
             }
         }
@@ -118,14 +152,14 @@ mod tests  {
     fn show() {
         let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
         let show = ls1.show();
-        assert_eq!(show, Some("DEVIT".to_string()));
+        assert_eq!(show, Some("DEVIT"));
     }
 
    #[test]
     fn seq() {
         let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
         let seq = ls1.sequence();
-        assert_eq!(seq, Some("RD".to_string()));
+        assert_eq!(seq, Some("RD"));
     }
 
     #[test]
@@ -140,7 +174,7 @@ mod tests  {
     fn shot() {
         let ls1 = LevelSpec::from_shot("DEVIT", "RD", "0001");
         let shot = ls1.shot();
-        assert_eq!(shot, Some("0001".to_string()));
+        assert_eq!(shot, Some("0001"));
     }
 
     #[test]

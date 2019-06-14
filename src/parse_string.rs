@@ -4,8 +4,7 @@
 use nom::*;
 use nom::IResult::*;
 use std::str;
-
-use super::*;
+use crate::{LevelSpec};
 
 named!(alpha_alphanumeric<&str, &str>,
         verify!(alphanumeric, |val: &str| !val.chars().next().unwrap().is_digit(10) )
