@@ -74,32 +74,16 @@ impl LevelSpec {
     /// Retrieve the show if it exists. Otherwise return None
     pub fn show(&self) -> Option<&str> {
         self.show.to_str()
-        // match self.show {
-        //     LevelType::Wildcard => self.show.to_str(),
-        //     LevelType::Term(_) => Some(self.show.to_),
-        //     _ => None,
-       // }
     }
 
     /// Retrieve the sequence as a string wrapped in an Option
     pub fn sequence(&self) -> Option<&str> {
         self.sequence.to_str()
-
-        // match self.sequence {
-        //     LevelType::Wildcard => Some(self.sequence.to_string()),
-        //     LevelType::Term(_) => Some(self.sequence.to_string()),
-        //     _ => None,
-        // }
     }
 
     /// Retrieve the sequence as a string wrapped in an Option
     pub fn shot(&self) -> Option<&str> {
         self.shot.to_str()
-        // match self.shot {
-        //     LevelType::Wildcard => Some(self.shot.to_string()),
-        //     LevelType::Term(_) => Some(self.shot.to_string()),
-        //     _ => None,
-        // }
     }
 
     /// return a vector of Strings representing a level
@@ -113,25 +97,25 @@ impl LevelSpec {
                 ret.push(self.shot.to_string());
             }
         }
-        ret // return ret
+        ret
     }
 
     /// Convert to a vector of &str
     pub fn to_vec_str<'a>(&'a self) -> Vec<&'a str> {
-        let mut v = Vec::<&'a str>::new();
+        let mut vec_strs = Vec::<&'a str>::new();
         let val = self.show.to_str();
         if val.is_some() {
-            v.push(val.unwrap());
+            vec_strs.push(val.unwrap());
             let val = self.sequence.to_str();
             if val.is_some() {
-                v.push(val.unwrap());
+                vec_strs.push(val.unwrap());
                 let val = self.shot.to_str();
                 if val.is_some() {
-                    v.push(val.unwrap());
+                    vec_strs.push(val.unwrap());
                 }
             }
         }
-        v
+        vec_strs
     }
 }
 
@@ -140,7 +124,7 @@ mod tests  {
     use super::*;
 
     #[test]
-    fn from_show() {
+    fn can_generate_from_show_str() {
         let ls1 = LevelSpec::from_show("DEVIT");
         let expected = LevelSpec {show: LevelType::Term("DEVIT".into()),
                                   sequence: LevelType::None,
@@ -149,21 +133,21 @@ mod tests  {
     }
 
     #[test]
-    fn show() {
+    fn returns_some_str_when_show_method_called() {
         let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
         let show = ls1.show();
         assert_eq!(show, Some("DEVIT"));
     }
 
    #[test]
-    fn seq() {
+    fn returns_some_str_when_seq_method_called() {
         let ls1 = LevelSpec::from_sequence("DEVIT", "RD");
         let seq = ls1.sequence();
         assert_eq!(seq, Some("RD"));
     }
 
     #[test]
-    fn seq_none() {
+    fn returns_none_when_seq_doesnt_exist() {
         let ls1 = LevelSpec::from_show("DEVIT");
         let seq = ls1.sequence();
         assert_eq!(seq, None);
@@ -171,7 +155,7 @@ mod tests  {
 
 
    #[test]
-    fn shot() {
+    fn returns_some_str_when_shot_method_called() {
         let ls1 = LevelSpec::from_shot("DEVIT", "RD", "0001");
         let shot = ls1.shot();
         assert_eq!(shot, Some("0001"));
