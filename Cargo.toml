@@ -1,6 +1,6 @@
 [package]
 name = "levelspec"
-version = "0.4.1"
+version = "0.6.0"
 authors = ["jonathan gerber <jlgerber@gmail.com>"]
 edition = "2018"
 
