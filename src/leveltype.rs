@@ -1,14 +1,12 @@
-
-/// A valid input describing a level within the levelspec. 
-#[derive(Debug,Clone,Eq,PartialEq)]
+/// A valid input describing a level within the levelspec.
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord)]
 pub enum LevelType {
     Term(String),
     Wildcard,
-    None
+    None,
 }
 
 impl LevelType {
-
     /// Convert to a string
     pub fn to_string(&self) -> String {
         match *self {
@@ -17,7 +15,6 @@ impl LevelType {
             _ => String::new(),
         }
     }
-    
     /// Convert to a str
     pub fn to_str(&self) -> Option<&str> {
         match *self {
@@ -91,7 +88,7 @@ mod tests {
         assert!(!lt.is_none());
     }
 
-     #[test]
+    #[test]
     fn is_wildcard() {
         let lt = LevelType::Wildcard;
         assert!(lt.is_wildcard());
@@ -99,7 +96,7 @@ mod tests {
         assert!(!lt.is_term());
     }
 
-     #[test]
+    #[test]
     fn is_none() {
         let lt = LevelType::None;
         assert!(!lt.is_wildcard());
