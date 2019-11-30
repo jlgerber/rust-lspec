@@ -1,4 +1,5 @@
 use crate::{parse_string, LSpecError, LevelType};
+use std::fmt;
 
 /// LevelSpec models a shorthand describing one or more paths
 /// on disk, characterized by show, sequence, and shot. This abstraction
@@ -11,6 +12,18 @@ pub struct LevelSpec {
     shot: LevelType,
 }
 
+impl fmt::Display for LevelSpec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = write!(f, "{}", self.show);
+        if let Some(ref seq) = self.sequence() {
+            result = write!(f, ".{}", seq);
+            if let Some(ref shot) = self.shot() {
+                result = write!(f, ".{}", shot);
+            }
+        }
+        result
+    }
+}
 impl LevelSpec {
     /// New up a levelspec
     pub fn new<I>(in_str: I) -> Result<LevelSpec, LSpecError>
@@ -266,5 +279,23 @@ mod tests {
         let res = lv.to_vec_str();
         let expected = vec!["FOO", "RD", "1000"];
         assert_eq!(expected, res);
+    }
+    #[test]
+    fn implements_display_for_show() {
+        let lv = LevelSpec::new("FOO").unwrap();
+        let lvstr = format!("{}", lv);
+        assert_eq!(lvstr.as_str(), "FOO");
+    }
+    #[test]
+    fn implements_display_for_seq() {
+        let lv = LevelSpec::new("FOO.RD").unwrap();
+        let lvstr = format!("{}", lv);
+        assert_eq!(lvstr.as_str(), "FOO.RD");
+    }
+    #[test]
+    fn implements_display_for_shot() {
+        let lv = LevelSpec::new("FOO.RD.1000").unwrap();
+        let lvstr = format!("{}", lv);
+        assert_eq!(lvstr.as_str(), "FOO.RD.1000");
     }
 }

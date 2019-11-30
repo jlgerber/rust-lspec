@@ -1,9 +1,20 @@
+use std::fmt;
+
 /// A valid input describing a level within the levelspec.
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord)]
 pub enum LevelType {
     Term(String),
     Wildcard,
     None,
+}
+
+impl fmt::Display for LevelType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_str() {
+            Some(ref val) => write!(f, "{}", val),
+            None => write!(f, ""),
+        }
+    }
 }
 
 impl LevelType {

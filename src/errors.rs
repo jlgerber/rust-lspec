@@ -1,14 +1,12 @@
 use failure::Fail;
-use std::{io, num, path::PathBuf };
+use std::{io, num, path::PathBuf};
 
 #[derive(Debug, Fail)]
 pub enum LSpecError {
-   
     #[fail(display = "Placeholder error")]
     Placeholder,
 
-
-     #[fail(display = "Boxed Error '{}'", _0)]
+    #[fail(display = "Boxed Error '{}'", _0)]
     BoxedError(String),
 
     #[fail(display = "{}", _0)]
@@ -19,9 +17,7 @@ pub enum LSpecError {
 
     #[fail(display = "{}", _0)]
     ParseNomError(#[cause] nom::ErrorKind),
-
 }
-
 
 impl From<io::Error> for LSpecError {
     fn from(error: io::Error) -> Self {
@@ -36,13 +32,13 @@ impl From<num::ParseIntError> for LSpecError {
 }
 
 impl From<std::boxed::Box<dyn std::error::Error>> for LSpecError {
-    fn from(error: std::boxed::Box<dyn std::error::Error> ) -> Self {
+    fn from(error: std::boxed::Box<dyn std::error::Error>) -> Self {
         LSpecError::BoxedError(error.to_string())
     }
 }
 
 impl std::convert::From<nom::ErrorKind> for LSpecError {
-    fn from(error: nom::ErrorKind ) -> Self {
+    fn from(error: nom::ErrorKind) -> Self {
         LSpecError::ParseNomError(error)
     }
 }
