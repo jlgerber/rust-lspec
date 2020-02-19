@@ -1,7 +1,7 @@
 use std::fmt;
 
 /// A valid input describing a level within the levelspec.
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub enum LevelType {
     Term(String),
     Wildcard,

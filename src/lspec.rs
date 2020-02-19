@@ -5,7 +5,7 @@ use std::fmt;
 /// on disk, characterized by show, sequence, and shot. This abstraction
 /// can be thought of as mapping to something like:
 /// `${ROOT}/show/sequence/shot`
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub struct LevelSpec {
     show: LevelType,
     sequence: LevelType,
