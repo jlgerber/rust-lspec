@@ -1,11 +1,12 @@
 use crate::{parse_string, LSpecError, LevelType};
+use serde::Serialize;
 use std::fmt;
 
 /// LevelSpec models a shorthand describing one or more paths
 /// on disk, characterized by show, sequence, and shot. This abstraction
 /// can be thought of as mapping to something like:
 /// `${ROOT}/show/sequence/shot`
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Serialize, Hash)]
 pub struct LevelSpec {
     show: LevelType,
     sequence: LevelType,
