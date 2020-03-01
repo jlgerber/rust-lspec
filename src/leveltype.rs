@@ -1,8 +1,8 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// A valid input describing a level within the levelspec.
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Serialize, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Serialize, Deserialize, Hash)]
 pub enum LevelType {
     Term(String),
     Wildcard,
